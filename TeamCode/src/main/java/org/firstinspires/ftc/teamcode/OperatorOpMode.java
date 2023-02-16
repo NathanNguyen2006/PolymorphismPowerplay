@@ -31,7 +31,7 @@ public class OperatorOpMode extends LinearOpMode{
         //sensorColorRange = hardwareMap.get(DistanceSensor.class, "sensorColorRange");
 
         //Robo Controller
-        roboController = new RoboController(hardwareMap);
+        roboController = new RoboController(this);
 
         //Choose which gamepad is which
         movePad = gamepad1;
