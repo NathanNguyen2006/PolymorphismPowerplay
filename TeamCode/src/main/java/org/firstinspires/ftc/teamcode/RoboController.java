@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode;
 
 
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotorController;
@@ -19,6 +21,8 @@ public class RoboController {
         return Math.abs(a-b)<eps;
     }
     private ElapsedTime runtime = new ElapsedTime();
+
+    private static final int speed = 1000;
 
     //Hardware
 
@@ -49,7 +53,11 @@ public class RoboController {
     }
     public Direction direction = Direction.North;
 
-    public RoboController(HardwareMap hardwareMap){
+    private LinearOpMode opMode;
+
+    public RoboController(LinearOpMode opMode){
+        this.opMode = opMode;
+        HardwareMap hardwareMap = opMode.hardwareMap;
         //Wheels
         FRW = hardwareMap.get(DcMotorEx.class, "FRW");
         FLW = hardwareMap.get(DcMotorEx.class, "FLW");
@@ -69,12 +77,12 @@ public class RoboController {
         ClawR = hardwareMap.get(Servo.class,"ClawR");
         //ClawR = hardwareMap.get(Servo.class,"ClawR");
         Hand = hardwareMap.get(Servo.class,"Hand");
-        ArmBase.setMode(DcMotor.RunMode.RESET_ENCODERS);
-        ArmTop.setMode(DcMotor.RunMode.RESET_ENCODERS);
-        ArmBase2.setMode(DcMotor.RunMode.RESET_ENCODERS);
-        ArmBase.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
-        ArmTop.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
-        ArmBase2.setMode(DcMotor.RunMode.RUN_USING_ENCODERS);
+        ArmBase.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        ArmTop.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        ArmBase2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        ArmBase.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        ArmTop.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        ArmBase2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         ArmTopPid = new Pid( 0.3, 0.3, 0.3, 1, -1, 1);
         ArmBasePid = new Pid(0.1, 0.1, 0.15, 1, -1, 1);
 
@@ -381,5 +389,129 @@ public class RoboController {
 
     public void toggleHand() {
         setHand(!handClosed);
+    }
+
+    public static int inchesToCounts(double inchesToDrive) {
+        double circumference = Constants.WHEEL_DIAMETER_IN_INCHES * Math.PI;
+        double rotations = inchesToDrive / circumference;
+        double countsToDrive = rotations * Constants.WHEEL_MOTOR_COUNTS_PER_ROTATION;
+        return (int) countsToDrive;
+    }
+
+    /** `face` should be one of the three labels in the `LABELS` array. */
+    public void moveTo(Signal face) {
+        if (face == Signal.One) {
+            moveOnXAxis(inchesToCounts(-18.5)); //from rightmost position
+            moveOnYAxis(inchesToCounts(5)); //distance to cone
+            this.setHand(false);
+            moveOnYAxis(inchesToCounts(-5));
+            moveOnXAxis(inchesToCounts((-Constants.TILE_LENGTH_IN_INCHES)/2.0));
+            moveOnYAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES));
+        }
+        else if (face == Signal.Two) {
+            moveOnXAxis(inchesToCounts(-18.5)); //from rightmost position
+            moveOnYAxis(inchesToCounts(5)); //distance to cone
+            this.setHand(false);
+            moveOnYAxis(inchesToCounts(-5));
+            moveOnXAxis(inchesToCounts((-Constants.TILE_LENGTH_IN_INCHES)/2.0));
+            moveOnYAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES));
+            moveOnYAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES));
+            moveOnXAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES));
+            moveOnXAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES/9.0));
+
+        }
+        else if (face == Signal.Three) {
+            moveOnXAxis(inchesToCounts(-18.5)); //from rightmost position
+            moveOnYAxis(inchesToCounts(5)); //distance to cone
+            this.setHand(false);
+            moveOnYAxis(inchesToCounts(-5));
+            moveOnXAxis(inchesToCounts((-Constants.TILE_LENGTH_IN_INCHES)/2.0));
+            moveOnYAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES));
+            moveOnYAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES));
+            moveOnXAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES));
+            moveOnXAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES));
+            moveOnXAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES/9.0));
+        }
+    }
+
+    public void moveOnXAxis(int ticks) {
+        DcMotorEx frontLeft = FLW,
+            frontRight = FRW,
+            rearLeft = BLW,
+            rearRight = BRW;
+
+        // Reset encoders
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rearLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rearRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        frontLeft.setTargetPosition(ticks);
+        rearLeft.setTargetPosition(-ticks);
+
+        frontRight.setTargetPosition(-ticks);
+        rearRight.setTargetPosition(ticks);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rearLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rearRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        frontLeft.setVelocity(-speed);
+        rearLeft.setVelocity(speed);
+
+        frontRight.setVelocity(speed);
+        rearRight.setVelocity(-speed);
+
+        while (opMode.opModeIsActive() && frontLeft.isBusy()) {
+          // Loop until the motor reaches its target position.
+          opMode.telemetry.addData("Front Left Encoder", frontLeft.getCurrentPosition());
+          opMode.telemetry.addData("Front Right Encoder", frontRight.getCurrentPosition());
+          opMode.telemetry.addData("Rear Left Encoder", rearLeft.getCurrentPosition());
+          opMode.telemetry.addData("Rear Right Encoder", rearRight.getCurrentPosition());
+          opMode.telemetry.update();
+        }
+
+        opMode.sleep(250);
+    }
+
+    public void moveOnYAxis(int ticks) {
+        DcMotorEx frontLeft = FLW,
+            frontRight = FRW,
+            rearLeft = BLW,
+            rearRight = BRW;
+
+        // Reset encoders
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rearLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rearRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        // Set position
+        frontLeft.setTargetPosition(ticks);
+        frontRight.setTargetPosition(ticks);
+        rearLeft.setTargetPosition(ticks);
+        rearRight.setTargetPosition(ticks);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rearLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rearRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        frontLeft.setVelocity(speed);
+        frontRight.setVelocity(speed);
+        rearLeft.setVelocity(speed);
+        rearRight.setVelocity(speed);
+
+        while (opMode.opModeIsActive() && frontLeft.isBusy()) {
+          // Loop until the motor reaches its target position.
+          opMode.telemetry.addData("Front Left Encoder", frontLeft.getCurrentPosition());
+          opMode.telemetry.addData("Front Right Encoder", frontRight.getCurrentPosition());
+          opMode.telemetry.addData("Rear Left Encoder", rearLeft.getCurrentPosition());
+          opMode.telemetry.addData("Rear Right Encoder", rearRight.getCurrentPosition());
+          opMode.telemetry.update();
+        }
+
+        opMode.sleep(250);
     }
 }

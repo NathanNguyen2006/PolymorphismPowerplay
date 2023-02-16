@@ -25,7 +25,7 @@ import java.util.List;
  */
 @Autonomous(name = "Autonomous Mode RIGHT", group = "Concept")
 //@Disabled
-public class LearningTensor2 extends LinearOpMode {
+public class AutoModeRight extends LinearOpMode {
     private RoboController roboController;
 
     /*
