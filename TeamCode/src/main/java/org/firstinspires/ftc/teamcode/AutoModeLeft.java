@@ -32,7 +32,7 @@ public class AutoModeLeft extends LinearOpMode {
     @Override
     public void runOpMode() {
         roboController = new RoboController(this);
-        strategy = new SolidColorStrategy(this);
+        strategy = new SolidColorStrategy(this, Direction.Left);
 
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start op mode");

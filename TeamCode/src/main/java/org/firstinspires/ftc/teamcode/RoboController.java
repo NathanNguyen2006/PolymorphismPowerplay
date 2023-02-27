@@ -38,6 +38,7 @@ public class RoboController {
     private DcMotor ArmTop;
     private Servo Hand;
     public Servo ClawR;
+    private Servo Twister;
     //private Servo ClawR;
     private Pid ArmTopPid;
     private Pid ArmBasePid;
@@ -77,6 +78,7 @@ public class RoboController {
         ClawR = hardwareMap.get(Servo.class,"ClawR");
         //ClawR = hardwareMap.get(Servo.class,"ClawR");
         Hand = hardwareMap.get(Servo.class,"Hand");
+        Twister = hardwareMap.get(Servo.class,"Twister");
         ArmBase.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         ArmTop.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         ArmBase2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -259,7 +261,7 @@ public class RoboController {
         if (!previousRightBumper && armpad.right_bumper) toggleHand();
         previousRightBumper = armpad.right_bumper;
         //ClawR.setPosition(1);
-        Hand.setPosition(0.52+ (ArmBase.getCurrentPosition()/640.0/5.5 * 0.22));
+        Hand.setPosition( (ArmBase.getCurrentPosition()/640.0/5.5 * 0.22));
         //Hand.setPosition(1);
 
         //if (armpad.y ){
@@ -381,9 +383,9 @@ public class RoboController {
     public void setHand(boolean closed) {
         handClosed = closed;
         if (handClosed) {
-            ClawR.setPosition(0.15);
+            ClawR.setPosition(0.30);
         } else {
-            ClawR.setPosition(0.4);
+            ClawR.setPosition(0.6);
         }
     }
 
