@@ -2,12 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.Gyroscope;
-import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
 public class OperatorOpMode extends LinearOpMode{
@@ -66,7 +61,7 @@ public class OperatorOpMode extends LinearOpMode{
             telemetry.addData("Position", roboController.getPosition());
             telemetry.addData("Armbase2", roboController.getThePosition());
             telemetry.addData("Armtoppos", roboController.getThePosition2());
-            telemetry.addData("Armtoppower", roboController.getArmtTopPower());
+            telemetry.addData("Armtoppower", roboController.getArmTopPower());
             telemetry.addData("armbase2power", roboController.getArmBase2Power());
             telemetry.addData("handpos", roboController.getHandPos());
             telemetry.addData("jlksdasdjlskl", roboController.xyz);

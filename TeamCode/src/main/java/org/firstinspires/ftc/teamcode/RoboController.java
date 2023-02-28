@@ -4,11 +4,7 @@ package org.firstinspires.ftc.teamcode;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.DcMotorController;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -33,9 +29,9 @@ public class RoboController {
     public DcMotorEx BLW;
 
     //Arm
-    private DcMotor ArmBase;
-    private DcMotor ArmBase2;
-    private DcMotor ArmTop;
+    public DcMotor ArmBase;
+    public DcMotor ArmBase2;
+    public DcMotor ArmTop;
     private Servo Hand;
     public Servo ClawR;
     private Servo Twister;
@@ -82,9 +78,9 @@ public class RoboController {
         ArmBase.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         ArmTop.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         ArmBase2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        ArmBase.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        ArmTop.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        ArmBase2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        ArmBase.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        ArmTop.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        ArmBase2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         ArmTopPid = new Pid( 0.3, 0.3, 0.3, 1, -1, 1);
         ArmBasePid = new Pid(0.1, 0.1, 0.15, 1, -1, 1);
 
@@ -111,10 +107,10 @@ public class RoboController {
 
     public void interpretMovepad(Gamepad movepad){
 
-        FLW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODERS);
-        FRW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODERS);
-        BLW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODERS);
-        BRW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODERS);
+        FLW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        FRW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BLW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BRW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         if(Math.abs(movepad.right_stick_x) > .2){
             turnPower = movepad.right_stick_x*0.35;
@@ -369,7 +365,7 @@ public class RoboController {
     public double getArmBase2Power(){
         return ArmBase.getPower();
     }
-    public double getArmtTopPower(){
+    public double getArmTopPower(){
         return ArmTop.getPower();
     }
     public double getHandPos(){
