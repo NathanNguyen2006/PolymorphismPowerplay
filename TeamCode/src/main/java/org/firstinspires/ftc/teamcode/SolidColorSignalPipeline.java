@@ -38,10 +38,10 @@ public class SolidColorSignalPipeline extends OpenCvPipeline {
         }
 
          // Anchor point definitions
-            Point sleeve_pointA = new Point(
+            sleeve_pointA = new Point(
                     anchorPoint.x,
                     anchorPoint.y);
-            Point sleeve_pointB = new Point(
+            sleeve_pointB = new Point(
                     anchorPoint.x + REGION_WIDTH,
                     anchorPoint.y + REGION_HEIGHT);
     }
