@@ -13,6 +13,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import java.lang.Math;
 
 public class RoboController {
+
+
     public static boolean almostEqual(double a, double b, double eps){
         return Math.abs(a-b)<eps;
     }
@@ -40,6 +42,8 @@ public class RoboController {
     private Pid ArmBasePid;
     private boolean handClosed = false;
     private boolean previousRightBumper = false;
+    private boolean previousLeftBumper = false;
+    private boolean twisterTurned = false;
 
     //directions
     private enum Direction {
@@ -210,12 +214,13 @@ public class RoboController {
         }
     }
     public int xyz = 0;
+
     //Not Implemented
     public void interpretArmpad(Gamepad armpad){
         long dt = runtime.nanoseconds();
         runtime.reset();
 
-        //ArmBase.setDirection(DcMotor.Direction.REVERSE);
+        ArmBase2.setDirection(DcMotor.Direction.REVERSE);
 
         //armpower
 
@@ -225,7 +230,7 @@ public class RoboController {
             ArmBase.setPower(-0.3);
             ArmBase2.setPower(-0.3);
         }
-        else if (ArmBase2.getCurrentPosition()< -75  || ArmBase.getCurrentPosition()< -75){
+        else if (ArmBase2.getCurrentPosition()< -250  || ArmBase.getCurrentPosition()< -250){
             ArmBase.setPower(0.3);
             ArmBase2.setPower(0.3);
         }
@@ -241,7 +246,7 @@ public class RoboController {
         //     ArmBase.setPower(0.001);
         //     ArmBase2.setPower(0.001);
         // }
-        double topConstFactor = .26;
+        double topConstFactor = .4;
         if(Math.abs(armpad.right_stick_y) > 0.3){
             ArmTop.setPower(armpad.right_stick_y*topConstFactor);
         }
@@ -256,8 +261,24 @@ public class RoboController {
          //Hand
         if (!previousRightBumper && armpad.right_bumper) toggleHand();
         previousRightBumper = armpad.right_bumper;
+        if (!previousLeftBumper && armpad.left_bumper) {
+            toggleTwister();
+        }
+        previousLeftBumper = armpad.left_bumper;
         //ClawR.setPosition(1);
-        Hand.setPosition( (ArmBase.getCurrentPosition()/640.0/5.5 * 0.22));
+//        if (armpad.a) {
+//            Hand.setPosition(0);
+//        }
+//         //boolean previousLeftBumper = armpad.left_bumper;
+//        if (armpad.b){
+//            Hand.setPosition(1);
+//        }
+        if(!twisterTurned) {
+            Hand.setPosition(0.3 + (ArmBase.getCurrentPosition() / 640.0 / 5.5 * 0.22) - (ArmTop.getCurrentPosition() / 640.0 / 5.5));
+        }
+        else{
+            Hand.setPosition(0.35);
+        }
         //Hand.setPosition(1);
 
         //if (armpad.y ){
@@ -363,7 +384,10 @@ public class RoboController {
         return ArmTop.getCurrentPosition();
     }
     public double getArmBase2Power(){
-        return ArmBase.getPower();
+        return ArmBase2.getPower();
+    }
+    public double getArmBasePosition(){
+        return ArmBase2.getCurrentPosition();
     }
     public double getArmTopPower(){
         return ArmTop.getPower();
@@ -372,14 +396,14 @@ public class RoboController {
         return Hand.getPosition();
     }
     public double getClawPos(){
-        return ClawR.getPosition();
+        return Twister.getPosition();
     }
 
 
     public void setHand(boolean closed) {
         handClosed = closed;
         if (handClosed) {
-            ClawR.setPosition(0.30);
+            ClawR.setPosition(0.40);
         } else {
             ClawR.setPosition(0.6);
         }
@@ -387,6 +411,19 @@ public class RoboController {
 
     public void toggleHand() {
         setHand(!handClosed);
+    }
+
+    public void setTwister(boolean turned) {
+        twisterTurned = turned;
+        if (twisterTurned) {
+            Twister.setPosition(0.92);
+        } else {
+            Twister.setPosition(0.20);
+        }
+    }
+
+    public void toggleTwister() {
+        setTwister(!twisterTurned);
     }
 
     public static int inchesToCounts(double inchesToDrive) {
