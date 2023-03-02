@@ -28,11 +28,13 @@ public class AutoModeLeft extends LinearOpMode {
     private RoboController roboController;
 
     private SolidColorStrategy strategy;
+    private Direction direction = Direction.Left;
+
 
     @Override
     public void runOpMode() {
         roboController = new RoboController(this);
-        strategy = new SolidColorStrategy(this, Direction.Left);
+        strategy = new SolidColorStrategy(this, direction);
 
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start op mode");
@@ -52,7 +54,7 @@ public class AutoModeLeft extends LinearOpMode {
                 }
                 else sleep(2000);
             }
-            roboController.moveTo(face);
+            roboController.moveTo(face, direction);
         }
     }
 

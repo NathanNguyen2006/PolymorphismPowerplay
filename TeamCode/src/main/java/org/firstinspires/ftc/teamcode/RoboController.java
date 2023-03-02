@@ -46,13 +46,8 @@ public class RoboController {
     private boolean twisterTurned = false;
 
     //directions
-    private enum Direction {
-        North,
-        South,
-        East,
-        West
-    }
-    public Direction direction = Direction.North;
+
+    public Compass direction = Compass.North;
 
     private LinearOpMode opMode;
 
@@ -124,16 +119,16 @@ public class RoboController {
         }
 
         if(movepad.left_stick_x > 0.3){
-            direction = Direction.East;
+            direction = Compass.East;
         }
         else if(movepad.left_stick_x < -0.3){
-            direction = Direction.West;
+            direction = Compass.West;
         }
         else if(movepad.left_stick_y < -0.3){
-            direction = Direction.North;
+            direction = Compass.North;
         }
         else if(movepad.left_stick_y > 0.3){
-            direction = Direction.South;
+            direction = Compass.South;
         }
 
 
@@ -434,32 +429,35 @@ public class RoboController {
     }
 
     /** `face` should be one of the three labels in the `LABELS` array. */
-    public void moveTo(Signal face) {
+    public void moveTo(Signal face, Direction direction) {
+        switch (direction) {
+            case Left:
+                moveOnXAxis(inchesToCounts(18.5)); //from leftmost position
+                moveOnYAxis(inchesToCounts(5)); //distance to cone
+                this.setHand(false);
+                moveOnYAxis(inchesToCounts(-5));
+                break;
+
+            case Right:
+                moveOnXAxis(inchesToCounts(-18.5)); //from rightmost position
+                moveOnYAxis(inchesToCounts(5)); //distance to cone
+                this.setHand(false);
+                moveOnYAxis(inchesToCounts(-5));
+                break;
+        }
+
         if (face == Signal.One) {
-            moveOnXAxis(inchesToCounts(-18.5)); //from rightmost position
-            moveOnYAxis(inchesToCounts(5)); //distance to cone
-            this.setHand(false);
-            moveOnYAxis(inchesToCounts(-5));
             moveOnXAxis(inchesToCounts((-Constants.TILE_LENGTH_IN_INCHES)/2.0));
             moveOnYAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES));
         }
         else if (face == Signal.Two) {
-            moveOnXAxis(inchesToCounts(-18.5)); //from rightmost position
-            moveOnYAxis(inchesToCounts(5)); //distance to cone
-            this.setHand(false);
-            moveOnYAxis(inchesToCounts(-5));
             moveOnXAxis(inchesToCounts((-Constants.TILE_LENGTH_IN_INCHES)/2.0));
             moveOnYAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES));
             moveOnYAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES));
             moveOnXAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES));
             moveOnXAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES/9.0));
-
         }
         else if (face == Signal.Three) {
-            moveOnXAxis(inchesToCounts(-18.5)); //from rightmost position
-            moveOnYAxis(inchesToCounts(5)); //distance to cone
-            this.setHand(false);
-            moveOnYAxis(inchesToCounts(-5));
             moveOnXAxis(inchesToCounts((-Constants.TILE_LENGTH_IN_INCHES)/2.0));
             moveOnYAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES));
             moveOnYAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES));
