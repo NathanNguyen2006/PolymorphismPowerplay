@@ -242,7 +242,8 @@ public class RoboController {
         //     ArmBase2.setPower(0.001);
         // }
         double topConstFactor = .4;
-        if(Math.abs(armpad.right_stick_y) > 0.3){
+        // Stop the arm from moving backwards and screwing up the system
+        if(Math.abs(armpad.right_stick_y) > 0.3 && !(armpad.right_stick_y > 0 && ArmTop.getCurrentPosition() > -10 )){
             ArmTop.setPower(armpad.right_stick_y*topConstFactor);
         }
         else {
@@ -256,10 +257,11 @@ public class RoboController {
          //Hand
         if (!previousRightBumper && armpad.right_bumper) toggleHand();
         previousRightBumper = armpad.right_bumper;
-        if (!previousLeftBumper && armpad.left_bumper) {
+
+        if (!previousLeftBumper && armpad.left_trigger > 0.9) {
             toggleTwister();
         }
-        previousLeftBumper = armpad.left_bumper;
+        previousLeftBumper = armpad.left_trigger > 0.9;
         //ClawR.setPosition(1);
 //        if (armpad.a) {
 //            Hand.setPosition(0);
@@ -431,40 +433,62 @@ public class RoboController {
     /** `face` should be one of the three labels in the `LABELS` array. */
     public void moveTo(Signal face, Direction direction) {
         switch (direction) {
-            case Left:
-                moveOnXAxis(inchesToCounts(18.5)); //from leftmost position
-                moveOnYAxis(inchesToCounts(5)); //distance to cone
-                this.setHand(false);
-                moveOnYAxis(inchesToCounts(-5));
-                break;
-
             case Right:
-                moveOnXAxis(inchesToCounts(-18.5)); //from rightmost position
-                moveOnYAxis(inchesToCounts(5)); //distance to cone
+                moveOnXAxis(inchesToCounts(18.5)); //from leftmost position
+                moveOnYAxis(inchesToCounts(4)); //distance to cone
                 this.setHand(false);
-                moveOnYAxis(inchesToCounts(-5));
+                moveOnYAxis(inchesToCounts(-4));
+                ClawR.setPosition(1);
+                if (face == Signal.Three) {
+                    moveOnXAxis(inchesToCounts((Constants.TILE_LENGTH_IN_INCHES)/2.0));
+                    moveOnYAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES));
+                }
+                else if (face == Signal.Two) {
+                    moveOnXAxis(inchesToCounts((Constants.TILE_LENGTH_IN_INCHES)/2.0));
+                    moveOnYAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES));
+                    moveOnYAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES -1 ));
+                    moveOnXAxis(inchesToCounts(-Constants.TILE_LENGTH_IN_INCHES));
+                    moveOnXAxis(inchesToCounts(-Constants.TILE_LENGTH_IN_INCHES/6.0));
+                }
+                else if (face == Signal.One) {
+                    moveOnXAxis(inchesToCounts((Constants.TILE_LENGTH_IN_INCHES)/2.0));
+                    moveOnYAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES));
+                    moveOnYAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES - 1));
+                    moveOnXAxis(inchesToCounts(-Constants.TILE_LENGTH_IN_INCHES));
+                    moveOnXAxis(inchesToCounts(-Constants.TILE_LENGTH_IN_INCHES));
+                    moveOnXAxis(inchesToCounts(-Constants.TILE_LENGTH_IN_INCHES/6.0));
+                }
+                break;
+
+            case Left:
+                moveOnXAxis(inchesToCounts(-18.5)); //from rightmost position
+                moveOnYAxis(inchesToCounts(4)); //distance to cone
+                this.setHand(false);
+                moveOnYAxis(inchesToCounts(-4));
+                ClawR.setPosition(1);
+                if (face == Signal.One) {
+                    moveOnXAxis(inchesToCounts((-Constants.TILE_LENGTH_IN_INCHES)/2.0));
+                    moveOnYAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES));
+                }
+                else if (face == Signal.Two) {
+                    moveOnXAxis(inchesToCounts((-Constants.TILE_LENGTH_IN_INCHES)/2.0));
+                    moveOnYAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES));
+                    moveOnYAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES -1));
+                    moveOnXAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES));
+                    moveOnXAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES/6.0));
+                }
+                else if (face == Signal.Three) {
+                    moveOnXAxis(inchesToCounts((-Constants.TILE_LENGTH_IN_INCHES)/2.0));
+                    moveOnYAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES));
+                    moveOnYAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES -1));
+                    moveOnXAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES));
+                    moveOnXAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES));
+                    moveOnXAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES/6.0));
+                }
                 break;
         }
 
-        if (face == Signal.One) {
-            moveOnXAxis(inchesToCounts((-Constants.TILE_LENGTH_IN_INCHES)/2.0));
-            moveOnYAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES));
-        }
-        else if (face == Signal.Two) {
-            moveOnXAxis(inchesToCounts((-Constants.TILE_LENGTH_IN_INCHES)/2.0));
-            moveOnYAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES));
-            moveOnYAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES));
-            moveOnXAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES));
-            moveOnXAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES/9.0));
-        }
-        else if (face == Signal.Three) {
-            moveOnXAxis(inchesToCounts((-Constants.TILE_LENGTH_IN_INCHES)/2.0));
-            moveOnYAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES));
-            moveOnYAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES));
-            moveOnXAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES));
-            moveOnXAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES));
-            moveOnXAxis(inchesToCounts(Constants.TILE_LENGTH_IN_INCHES/9.0));
-        }
+
     }
 
     public void moveOnXAxis(int ticks) {
@@ -481,7 +505,6 @@ public class RoboController {
 
         frontLeft.setTargetPosition(ticks);
         rearLeft.setTargetPosition(-ticks);
-
         frontRight.setTargetPosition(-ticks);
         rearRight.setTargetPosition(ticks);
 

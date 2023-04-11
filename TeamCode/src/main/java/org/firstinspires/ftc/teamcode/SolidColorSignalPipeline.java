@@ -24,18 +24,18 @@ public class SolidColorSignalPipeline extends OpenCvPipeline {
     public static int REGION_HEIGHT = 75;
 
     // TOPLEFT anchor points for the bounding box
-    private static Point SLEEVE_TOPLEFT_ANCHOR_POINT = new Point(145 + 150, 168);
-//    private static Point SLEEVE_TOPLEFT_ANCHOR_POINT_RIGHT = new Point(800-145-REGION_WIDTH, 168);
+    private static Point SLEEVE_TOPLEFT_ANCHOR_POINT_LEFT = new Point(275, 168);
+    private static Point SLEEVE_TOPLEFT_ANCHOR_POINT_RIGHT = new Point(800-REGION_WIDTH * 1.5, 168);
 
     public SolidColorSignalPipeline(Direction direction){
         super();
 
-        Point anchorPoint = SLEEVE_TOPLEFT_ANCHOR_POINT;
-//        if (direction == Direction.Left) {
-//            anchorPoint = SLEEVE_TOPLEFT_ANCHOR_POINT;
-//        } else if (direction == Direction.Right) {
-//            anchorPoint = SLEEVE_TOPLEFT_ANCHOR_POINT_RIGHT;
-//        }
+        Point anchorPoint = SLEEVE_TOPLEFT_ANCHOR_POINT_LEFT;
+        if (direction == Direction.Left) {
+            anchorPoint = SLEEVE_TOPLEFT_ANCHOR_POINT_LEFT;
+        } else if (direction == Direction.Right) {
+            anchorPoint = SLEEVE_TOPLEFT_ANCHOR_POINT_RIGHT;
+        }
 
          // Anchor point definitions
             sleeve_pointA = new Point(
