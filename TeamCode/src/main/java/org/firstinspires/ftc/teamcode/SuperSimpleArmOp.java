@@ -5,16 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 @TeleOp
-public class OperatorOpMode extends LinearOpMode{
-    //Personal Class
+public class SuperSimpleArmOp extends LinearOpMode {
     private RoboController roboController;
-
-    //private Gyroscope imu;
-    //private DcMotor motorTest;
-    //private DigitalChannel digitalTouch;
-    // private DistanceSensor sensorColorRange;
-
-    //private Servo servoTest;
 
     private Gamepad movePad;
     private Gamepad armPad;
@@ -43,11 +35,12 @@ public class OperatorOpMode extends LinearOpMode{
         while (opModeIsActive()){
             //telemetry.addData("Status", "Playing");
             //Transferring movement inputs
-            roboController.interpretMovepad(movePad);
-            roboController.interpretArmpad(armPad);
+            roboController.ArmBase.setPower(armPad.left_stick_y);
+            roboController.ArmBase2.setPower(armPad.right_stick_y);
+            roboController.ArmTop.setPower(armPad.right_trigger - armPad.left_trigger);
             //roboController.interpretArmpad(armPad);
             // roboController.testWheels(movePad);
-            telemetry.addData("movepad.right_stick_x:", gamepad2.right_stick_y);
+            telemetry.addData("movepad.right_stick_y:", gamepad2.right_stick_y);
             telemetry.addData("movepad.left_stick_y", gamepad2.left_stick_y);
             telemetry.addData("Status", "Running");
             telemetry.addData("Direction", roboController.direction);
@@ -59,8 +52,7 @@ public class OperatorOpMode extends LinearOpMode{
             //telemetry.addData("ArmTop", gamepad2.ArmTop.getCurrentPosition());
             //telemetry.addData("Drive", direction);
             telemetry.addData("Position", roboController.getPosition());
-            telemetry.addData("Armbasepos", roboController.getThePosition());
-            telemetry.addData("Armbase2pos", roboController.getArmBasePosition());
+            telemetry.addData("Armbase2", roboController.getThePosition());
             telemetry.addData("Armtoppos", roboController.getThePosition2());
             telemetry.addData("Armtoppower", roboController.getArmTopPower());
             telemetry.addData("armbase2power", roboController.getArmBase2Power());
